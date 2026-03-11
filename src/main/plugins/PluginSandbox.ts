@@ -77,7 +77,6 @@ export class PluginSandbox {
       this.script = new vm.Script(code, {
         filename: pluginPath,
         lineOffset: 0,
-        displayErrors: true,
       });
       
       // 在沙箱中执行
@@ -173,10 +172,10 @@ export class PluginSandbox {
     // 构建沙箱上下文
     this.context = {
       console: limitedConsole,
-      setTimeout: wrappedSetTimeout,
-      setInterval: wrappedSetInterval,
-      clearTimeout: wrappedClearTimeout,
-      clearInterval: wrappedClearInterval,
+      setTimeout: wrappedSetTimeout as any,
+      setInterval: wrappedSetInterval as any,
+      clearTimeout: wrappedClearTimeout as any,
+      clearInterval: wrappedClearInterval as any,
       Promise,
       Blob,
       ArrayBuffer,
@@ -187,7 +186,7 @@ export class PluginSandbox {
     };
 
     // 创建上下文对象
-    this.contextifiedObject = vm.createContext(this.context, {
+    this.contextifiedObject = vm.createContext(this.context as any, {
       name: `Plugin:${pluginId}`,
       codeGeneration: {
         strings: false, // 禁止 eval/new Function

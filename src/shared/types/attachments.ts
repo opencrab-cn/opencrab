@@ -5,6 +5,8 @@
  * 预留文件解析接口
  */
 
+import { ChatMessage, MessageContent } from '../../main/adapters/model.interface';
+
 /**
  * 附件类型枚举
  */
@@ -87,8 +89,9 @@ export type AnyAttachment = ImageAttachment | AudioAttachment | FileAttachment;
 export interface ContentItem {
   type: 'text' | 'image' | 'audio';
   text?: string;
-  image?: string;  // URL 或 Base64
-  audio?: string;  // URL 或 Base64
+  data?: string;  // URL 或 Base64
+  description?: string;
+  format?: string;
 }
 
 /**
@@ -155,3 +158,45 @@ export const SUPPORTED_AUDIO_FORMATS = [
   'audio/ogg',
   'audio/webm',
 ];
+
+/**
+ * 构建多模态消息（包含文本和附件）
+ * @param text - 文本内容
+ * @param attachments - 附件列表
+ * @returns 多模态消息结构
+ */
+export function buildMultimodalMessage(
+  text: string,
+  attachments: AnyAttachment[]
+): ChatMessage {
+  const contentItems: MessageContent[] = [];
+  
+  // 添加文本内容
+  if (text.trim()) {
+    contentItems.push({
+      type: 'text',
+      text: text.trim(),
+    });
+  }
+  
+  // 添加附件内容
+  for (const attachment of attachments) {
+    if (attachment.type === 'image') {
+      contentItems.push({
+        type: 'image',
+        data: attachment.data, // Base64 或 URL
+      });
+    } else if (attachment.type === 'audio') {
+      contentItems.push({
+        type: 'audio',
+        data: attachment.data, // Base64 或 URL
+        format: attachment.metadata?.format,
+      });
+    }
+  }
+  
+  return {
+    role: 'user',
+    content: contentItems,
+  };
+}

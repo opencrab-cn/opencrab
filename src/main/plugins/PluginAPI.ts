@@ -6,6 +6,8 @@
 
 import { ipcMain } from 'electron';
 import { PluginAPIResult } from '../../shared/types/plugins';
+import { ChatMessage, ChatCompletionOptions } from '../adapters/model.interface';
+import { QwenChatOptions } from '../../shared/types';
 
 /**
  * 插件可用的 API 接口
@@ -76,13 +78,17 @@ export class PluginAPI {
        */
       async chat(messages: any[], options?: any): Promise<PluginAPIResult> {
         try {
-          const result = await ipcMain.invoke('model:chat', { messages, options });
-          return { success: true, data: result };
+          // TODO: 实现插件专用的模型调用逻辑
+          // 目前返回一个错误提示
+          return { 
+            success: false, 
+            error: '插件模型调用功能尚未实现' 
+          };
         } catch (error: any) {
           return { 
             success: false, 
             error: error.message || '模型调用失败' 
-          };
+          };  
         }
       },
 

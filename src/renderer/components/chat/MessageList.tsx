@@ -9,7 +9,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { ChatMessageItem } from '../../../../shared/types';
+import { ChatMessageItem } from '../../../shared/types';
 import { createStreamRenderer, StreamRenderer } from '../../utils/streamRenderer';
 
 /**

@@ -14,7 +14,7 @@ const md = MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
-  highlight: (str, lang) => {
+  highlight: (str: string, lang: string): string => {
     // 代码块高亮
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -38,7 +38,7 @@ md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
   if (aIndex < 0) {
     tokens[idx].attrPush(['target', '_blank']);
     tokens[idx].attrPush(['rel', 'noopener noreferrer']);
-  } else {
+  } else if (tokens[idx].attrs && tokens[idx].attrs[aIndex]) {
     tokens[idx].attrs[aIndex][1] = '_blank';
   }
   return self.renderToken(tokens, idx, options);

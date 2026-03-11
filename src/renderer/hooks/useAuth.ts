@@ -241,7 +241,7 @@ export function useAuth(providerId: string): UseAuthReturn {
    */
   useEffect(() => {
     if (!token || !token.expiresAt) {
-      return;
+      return undefined;
     }
 
     // 计算刷新时间 (过期前 5 分钟)
@@ -263,6 +263,8 @@ export function useAuth(providerId: string): UseAuthReturn {
 
       return () => clearTimeout(timer);
     }
+    
+    return undefined;
   }, [token, providerId, refreshToken]);
 
   return {

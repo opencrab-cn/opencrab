@@ -67,7 +67,7 @@ const electronAPI = {
      * @param channel - IPC 通道名
      * @param func - 回调函数
      */
-    on: (channel: string, func: (...args: unknown[]) => void) => {
+    on: (channel: string, func: (...args: unknown[]) => void): (() => void) | undefined => {
       if (isValidChannel(channel)) {
         const subscription = (_event: IpcRendererEvent, ...args: unknown[]) => func(...args);
         ipcRenderer.on(channel, subscription);
@@ -78,6 +78,7 @@ const electronAPI = {
         };
       } else {
         console.warn(`[Preload] 阻止未授权的 IPC 订阅：${channel}`);
+        return undefined;
       }
     },
 

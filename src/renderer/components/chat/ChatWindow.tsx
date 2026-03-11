@@ -10,7 +10,7 @@ import { useAuth } from '../../hooks/useAuth';
 import ModelSelector from './ModelSelector';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
-import { QwenChatOptions } from '../../../../shared/types';
+import { QwenChatOptions } from '../../../shared/types';
 
 /**
  * 组件属性
