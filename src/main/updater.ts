@@ -209,7 +209,8 @@ class UpdaterManager {
     } else if (response === 2) {
       // 忽略此版本
       console.log('[Updater] 用户选择忽略此版本');
-      autoUpdater.ignore = info.version;
+      // TODO: 实现版本忽略逻辑（需要存储到配置文件）
+      // autoUpdater.ignore = info.version;
       return;
     }
     // response === 1: 稍后提醒，不做处理

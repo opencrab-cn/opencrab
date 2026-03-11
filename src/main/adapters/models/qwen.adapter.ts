@@ -18,7 +18,7 @@ import {
   ModelCapabilities,
   ModelError,
   TokenUsage,
-} from './model.interface';
+} from '../model.interface';
 import axios, { AxiosError } from 'axios';
 import { aliyunProvider } from '../../auth/providers/aliyun.provider';
 import { getModelConfig, QwenChatOptions } from '../../../shared/types';
@@ -345,7 +345,7 @@ export class QwenModelAdapter implements IModelAdapter {
     }
 
     // 网络错误
-    if (error instanceof Error && error.message.includes('fetch') || error.message.includes('network')) {
+    if (error instanceof Error && (error.message.includes('fetch') || error.message.includes('network'))) {
       return {
         type: 'network',
         message: '网络错误：请检查网络连接',

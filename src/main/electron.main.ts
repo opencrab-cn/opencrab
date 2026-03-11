@@ -74,14 +74,15 @@ function createWindow(): void {
 
   // 开发环境加载 Vite 开发服务器
   // 生产环境加载打包后的文件
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged || process.defaultApp;
+  console.log('[Main] 开发模式:', isDev, 'NODE_ENV:', process.env.NODE_ENV, 'isPackaged:', app.isPackaged, 'defaultApp:', process.defaultApp);
   
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
     // 开发环境下自动打开开发者工具
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../../renderer/dist/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../dist/renderer/index.html'));
   }
 
   // 窗口准备完成后显示
