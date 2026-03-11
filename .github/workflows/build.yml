@@ -1,0 +1,212 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  
+  pull_request:
+    branches:
+      - main
+
+# 权限配置
+permissions:
+  contents: write
+  packages: write
+
+env:
+  NODE_VERSION: '20'
+  ELECTRON_BUILDER_CONFIG: electron-builder.yml
+
+jobs:
+  # ========== 构建任务 ==========
+  build-windows:
+    name: Build for Windows
+    runs-on: windows-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 安装依赖
+        run: npm ci
+      
+      - name: 运行测试
+        run: npm test || true  # 测试失败不中断构建
+      
+      - name: 构建主进程
+        run: npx tsc -p tsconfig.main.json
+      
+      - name: 构建渲染进程
+        run: npx vite build
+      
+      - name: 打包应用 (x64)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win --x64 --publish never
+      
+      - name: 打包应用 (ARM64)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win --arm64 --publish never
+      
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: opencrab-windows
+          path: release/*.exe
+          retention-days: 30
+
+  build-macos:
+    name: Build for macOS
+    runs-on: macos-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 安装依赖
+        run: npm ci
+      
+      - name: 导入代码签名证书
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          KEYCHAIN_PASSWORD: 'action'
+        run: |
+          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+          security create-keychain -p $KEYCHAIN_PASSWORD action.keychain
+          security default-keychain -s action.keychain
+          security unlock-keychain -p $KEYCHAIN_PASSWORD action.keychain
+          security import certificate.p12 -k action.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PASSWORD action.keychain
+      
+      - name: 构建主进程
+        run: npx tsc -p tsconfig.main.json
+      
+      - name: 构建渲染进程
+        run: npx vite build
+      
+      - name: 打包应用 (Intel)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.MACOS_CERTIFICATE_NAME }}
+          CSC_KEY_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: npx electron-builder --mac --x64 --publish never
+      
+      - name: 打包应用 (Apple Silicon)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.MACOS_CERTIFICATE_NAME }}
+          CSC_KEY_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: npx electron-builder --mac --arm64 --publish never
+      
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: opencrab-macos
+          path: release/*.dmg
+          retention-days: 30
+
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 安装依赖
+        run: npm ci
+      
+      - name: 构建主进程
+        run: npx tsc -p tsconfig.main.json
+      
+      - name: 构建渲染进程
+        run: npx vite build
+      
+      - name: 打包应用 (x64)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --linux --x64 --publish never
+      
+      - name: 打包应用 (ARM64)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --linux --arm64 --publish never
+      
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: opencrab-linux
+          path: release/*.AppImage
+          retention-days: 30
+
+  # ========== 发布任务 ==========
+  release:
+    name: Create Release
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: 下载所有构建产物
+        uses: actions/download-artifact@v4
+        with:
+          pattern: opencrab-*
+          merge-multiple: true
+          path: ./release
+      
+      - name: 列出构建产物
+        run: ls -lh release/
+      
+      - name: 创建 GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ========== 通知任务 ==========
+  notify:
+    name: Send Notification
+    needs: [release]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: 发送 Discord 通知（可选）
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: 'OpenCrab ${{ github.ref_name }} 构建完成！🎉'

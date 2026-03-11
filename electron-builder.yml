@@ -1,0 +1,259 @@
+# Electron Builder 配置文件
+# 支持 Windows/macOS/Linux 三平台打包
+
+appId: com.opencrab.app
+productName: OpenCrab
+copyright: Copyright © 2024 OpenCrab Team
+
+# 构建目录配置
+directories:
+  output: release
+  buildResources: build
+
+# 文件包含规则
+files:
+  - dist/**/*
+  - package.json
+  - README.md
+  - LICENSE
+  
+# 排除的文件（减小体积）
+exclude:
+  - '**/*.ts'
+  - '**/*.tsx.map'
+  - 'src/**/*'
+  - 'docs/**/*'
+  - 'scripts/**/*'
+  - '*.md'
+  - .env*
+  - .gitignore
+  - node_modules/.bin/**
+
+# 依赖处理
+dependencies:
+  # 原生模块预编译
+  keytar: '^7.9.0'
+  sharp: '^0.33.0'
+  fluent-ffmpeg: '^2.1.2'
+
+# 禁用 node-gyp 重建（使用预编译二进制）
+nodeGypRebuild: false
+
+# npm 配置
+npmRebuild: true
+
+# 压缩级别 (store, normal, maximum)
+compression: maximum
+
+# 是否生成源代码映射
+# production: false 表示不生成 map 文件
+asarUnpack:
+  - '**/*.node'
+  - 'node_modules/sharp/**/*'
+  - 'node_modules/fluent-ffmpeg/**/*'
+
+# ========== Windows 配置 ==========
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+  
+  # 应用图标
+  icon: build/icons/icon.ico
+  
+  # 签名配置（可选）
+  # signingHashAlgorithms:
+  #   - sha256
+  # signatureFileFlags: APPEND_TIMESTAMP
+  
+  # 资源文件
+  requestedExecutionLevel: asInvoker
+  
+  # 移除不必要文件
+  artifactName: ${productName}-${version}-win-${arch}.${ext}
+
+# NSIS 安装包配置
+nsis:
+  # 一键安装（无自定义路径）
+  oneClick: true
+  
+  # 允许用户选择安装路径
+  allowToChangeInstallationDirectory: false
+  
+  # 创建桌面快捷方式
+  createDesktopShortcut: always
+  
+  # 创建开始菜单快捷方式
+  createStartMenuShortcut: true
+  
+  # 快捷方式名称
+  shortcutName: OpenCrab
+  
+  # 卸载显示名称
+  uninstallDisplayName: OpenCrab
+  
+  # 卸载后删除用户数据（谨慎使用）
+  deleteAppDataOnUninstall: false
+  
+  # 安装包名称
+  artifactName: ${productName}-${version}-setup-${arch}.${ext}
+  
+  # 安装包类型（可执行文件）
+  installerHeaderIcon: build/icons/installer.ico
+  
+  # 安装完成后自动运行
+  runAfterFinish: true
+  
+  # 差异化安装包（增量更新）
+  differentialPackage: true
+
+# ========== macOS 配置 ==========
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  
+  # 应用图标
+  icon: build/icons/icon.icns
+  
+  # 类别（App Store 分类）
+  category: public.app-category.productivity
+  
+  # 最小系统版本
+  minimumSystemVersion: '10.13'
+  
+  # 硬链接运行时
+  hardenedRuntime: true
+  
+  #  entitlements
+  entitlements: build/entitlements.mac.plist
+  
+  # 继承 entitlements
+  entitlementsInherit: build/entitlements.mac.plist
+  
+  # Gatekeeper 票据
+  gatekeeperAssess: false
+  
+  # 代码签名身份
+  # identity: "Developer ID Application: Your Name (TEAM_ID)"
+  
+  # 签名选项
+  type: distribution
+  
+  # 时间戳服务器
+  timestamp: "http://timestamp.apple.com/ts01"
+  
+  # 资源文件名称
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+  
+  # 暗模式支持
+  darkModeSupport: true
+  
+  # 全屏支持
+  fullscreen: false
+
+# DMG 配置
+dmg:
+  # 窗口标题
+  title: "${productName} ${version}"
+  
+  # 窗口大小
+  window:
+    width: 660
+    height: 400
+  
+  # 内容布局
+  contents:
+    - x: 180
+      y: 170
+      type: file
+    - x: 480
+      y: 170
+      type: link
+      path: /Applications
+  
+  # 背景图片
+  background: build/dmg-background.png
+  
+  # 覆盖卷标
+  overwrite: true
+  
+  # 签名 DMG
+  sign: true
+
+# ZIP 配置
+zip:
+  # ZIP 压缩级别
+  compressionLevel: 9
+
+# ========== Linux 配置 ==========
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+        - arm64
+  
+  # 应用图标
+  icon: build/icons
+  
+  # 类别
+  category: Utility
+  
+  # MIME 类型（关联文件）
+  # mimeTypes:
+  #   - x-scheme-handler/opencrab
+  
+  # 资源文件名称
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+  
+  # 可执行文件名称
+  executableName: opencrab
+
+# AppImage 配置
+appImage:
+  # 网络检查
+  requestBuildPermissions: false
+
+# ========== 自动更新配置 ==========
+publish:
+  # 发布提供商
+  provider: github
+  
+  # GitHub 仓库
+  owner: opencrab
+  repo: opencrab
+  
+  # 是否发布 draft
+  # vTag: true
+  
+  # 私有仓库认证（可选）
+  # token: ${GH_TOKEN}
+
+# ========== 构建钩子 ==========
+afterPack: scripts/after-pack.js
+afterSign: scripts/notarize.js
+
+# ========== 扩展配置 ==========
+# 协议注册（可选）
+# protocols:
+#   - name: OpenCrab Protocol
+#   schemes:
+#     - opencrab
+#   role: Editor
+
+# 文件关联（可选）
+# fileAssociations:
+#   - ext: opencrab
+#     name: OpenCrab Document
+#     description: OpenCrab Chat Document
+#     mimeType: application/x-opencrab
+#     role: Editor

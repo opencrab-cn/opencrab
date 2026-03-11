@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 允许访问摄像头 -->
+    <key>com.apple.security.device.camera</key>
+    <true/>
+    
+    <!-- 允许访问麦克风 -->
+    <key>com.apple.security.device.microphone</key>
+    <true/>
+    
+    <!-- 允许访问用户 Downloads 文件夹 -->
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+    
+    <!-- 允许访问用户 Pictures 文件夹 -->
+    <key>com.apple.security.files.pictures.read-write</key>
+    <true/>
+    
+    <!-- 允许网络访问 -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    
+    <!-- 允许本地服务器（OAuth 回调） -->
+    <key>com.apple.security.network.server</key>
+    <true/>
+    
+    <!-- 允许访问钥匙串（存储 OAuth Token） -->
+    <key>com.apple.security.keychain</key>
+    <true/>
+    
+    <!-- 允许临时异常（用于 notarization） -->
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    
+    <!-- 禁用库验证（某些原生模块需要） -->
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+    
+    <!-- 允许 JIT 编译（V8 引擎需要） -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+</dict>
+</plist>
