@@ -5,7 +5,7 @@
  * 限制插件的访问权限，确保安全性
  */
 
-import { vm } from 'node:vm';
+import * as vm from 'node:vm';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { PluginInstance } from '../../shared/types/plugins';
@@ -54,10 +54,12 @@ export class PluginSandbox {
   private script: vm.Script | null = null;
   private contextifiedObject: vm.Context | null = null;
   private timers: Set<NodeJS.Timeout> = new Set();
+  private timeoutType: typeof setTimeout;
 
   constructor(instance: PluginInstance, pluginAPI: PluginAPI) {
     this.instance = instance;
     this.pluginAPI = pluginAPI;
+    this.timeoutType = setTimeout;
   }
 
   /**
@@ -154,14 +156,18 @@ export class PluginSandbox {
       return timer;
     };
 
-    const wrappedClearTimeout = (timer: NodeJS.Timeout) => {
-      this.timers.delete(timer);
-      clearTimeout(timer);
+    const wrappedClearTimeout = (timer: NodeJS.Timeout | string | number | undefined) => {
+      if (timer !== undefined && timer !== null) {
+        this.timers.delete(timer as NodeJS.Timeout);
+        clearTimeout(timer as NodeJS.Timeout);
+      }
     };
 
-    const wrappedClearInterval = (timer: NodeJS.Timeout) => {
-      this.timers.delete(timer);
-      clearInterval(timer);
+    const wrappedClearInterval = (timer: NodeJS.Timeout | string | number | undefined) => {
+      if (timer !== undefined && timer !== null) {
+        this.timers.delete(timer as NodeJS.Timeout);
+        clearInterval(timer as NodeJS.Timeout);
+      }
     };
 
     // 构建沙箱上下文

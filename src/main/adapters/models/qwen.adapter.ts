@@ -18,10 +18,10 @@ import {
   ModelCapabilities,
   ModelError,
   TokenUsage,
-} from '../adapters/model.interface';
+} from './model.interface';
 import axios, { AxiosError } from 'axios';
 import { aliyunProvider } from '../../auth/providers/aliyun.provider';
-import { getModelConfig, QwenChatOptions } from '../../shared/types';
+import { getModelConfig, QwenChatOptions } from '../../../shared/types';
 
 /**
  * Qwen API 请求体结构

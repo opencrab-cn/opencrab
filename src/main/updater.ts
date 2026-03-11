@@ -41,7 +41,7 @@ export enum UpdateStatus {
 export interface UpdateState {
   status: UpdateStatus;
   version?: string;
-  releaseNotes?: string | null;
+  releaseNotes?: string | any[] | null;
   progress?: number;
   error?: string;
   downloadedFile?: string;
@@ -210,6 +210,7 @@ class UpdaterManager {
       // 忽略此版本
       console.log('[Updater] 用户选择忽略此版本');
       autoUpdater.ignore = info.version;
+      return;
     }
     // response === 1: 稍后提醒，不做处理
   }

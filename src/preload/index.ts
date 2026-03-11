@@ -48,7 +48,7 @@ const electronAPI = {
      * @param channel - IPC 通道名
      * @param args - 传递的参数
      */
-    invoke: async (channel: string, ...args: unknown[]) => {
+    invoke: async (channel: string, ...args: unknown[]): Promise<unknown> => {
       if (isValidChannel(channel)) {
         try {
           return await ipcRenderer.invoke(channel, ...args);

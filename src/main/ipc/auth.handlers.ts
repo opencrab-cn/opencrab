@@ -6,8 +6,8 @@
  */
 
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
-import { aliyunProvider, AliyunOAuthProvider } from '../providers/aliyun.provider';
-import { OAuthConfig, OAuthToken } from '../provider.interface';
+import { aliyunProvider, AliyunOAuthProvider } from '../auth/providers/aliyun.provider';
+import { OAuthConfig, OAuthToken } from '../auth/provider.interface';
 
 /**
  * 认证状态接口

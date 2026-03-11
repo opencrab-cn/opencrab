@@ -60,7 +60,7 @@ install_deps() {
     fi
     
     # 安装依赖
-    npm ci --prefer-offline
+    npm install --prefer-offline
     
     print_info "依赖安装完成"
 }
