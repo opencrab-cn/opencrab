@@ -1,0 +1,28 @@
+{
+  "id": "chinese-doc-writer",
+  "name": "中文公文写作助手",
+  "description": "基于模板生成符合中文规范的公文，支持通知/请示/函/会议纪要等格式",
+  "version": "1.0.0",
+  "author": "OpenCrab Team",
+  "icon": "📄",
+  "cover": "https://example.com/doc-writer-cover.png",
+  "environment": "both",
+  "permissions": [
+    "model:chat",
+    "fs:write",
+    "clipboard",
+    "notification"
+  ],
+  "main": "index.js",
+  "renderer": "renderer.js",
+  "defaultConfig": {
+    "defaultTemplate": "notice",
+    "autoSave": true,
+    "formatCheck": true,
+    "sensitiveWordCheck": true
+  },
+  "tags": ["写作辅助", "办公效率", "公文"],
+  "featured": true,
+  "homepage": "https://github.com/opencrab/opencrab-plugins/tree/main/chinese-doc-writer",
+  "repository": "https://github.com/opencrab/opencrab-plugins"
+}

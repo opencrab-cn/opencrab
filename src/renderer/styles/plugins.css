@@ -1,0 +1,426 @@
+/**
+ * 插件系统样式
+ */
+
+/* ========== 插件市场 ========== */
+.plugin-market {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.plugin-market-header {
+  margin-bottom: 32px;
+}
+
+.plugin-market-header h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-text-primary);
+}
+
+.plugin-market-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* ========== 工具栏 ========== */
+.plugin-market-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--color-bg-tertiary);
+  border-radius: 12px;
+}
+
+.plugin-categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.category-btn:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-hover);
+}
+
+.category-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.category-icon {
+  font-size: 16px;
+}
+
+.plugin-search input {
+  padding: 8px 16px;
+  width: 280px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.plugin-search input:focus {
+  border-color: var(--color-primary);
+}
+
+/* ========== 插件卡片网格 ========== */
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.plugin-card {
+  position: relative;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-card);
+  transition: all 0.3s;
+  overflow: hidden;
+}
+
+.plugin-card:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.plugin-card.featured {
+  border-color: var(--color-warning);
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(255, 193, 7, 0.05) 100%);
+}
+
+/* 精选标记 */
+.featured-badge {
+  position: absolute;
+  top: 12px;
+  right: -30px;
+  padding: 4px 40px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+/* 卡片头部 */
+.plugin-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.plugin-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: var(--color-bg-tertiary);
+  border-radius: 10px;
+}
+
+.plugin-info {
+  flex: 1;
+}
+
+.plugin-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.plugin-version {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+/* 描述 */
+.plugin-description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  min-height: 40px;
+}
+
+/* 元信息 */
+.plugin-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+}
+
+.plugin-author {
+  flex: 1;
+}
+
+.plugin-stats {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 操作按钮 */
+.plugin-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-hover);
+}
+
+/* ========== 状态提示 ========== */
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-text-tertiary);
+  font-size: 16px;
+}
+
+.empty-state p {
+  margin-top: 8px;
+}
+
+/* ========== 插件设置页 ========== */
+.plugin-settings {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.plugin-settings-header {
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.plugin-settings-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.plugin-id {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  font-family: monospace;
+}
+
+/* 设置表单 */
+.plugin-settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.setting-item {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-card);
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.setting-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.setting-value {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  font-family: monospace;
+  padding: 4px 8px;
+  background: var(--color-bg-tertiary);
+  border-radius: 4px;
+}
+
+.setting-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.setting-input:focus {
+  border-color: var(--color-primary);
+}
+
+/* 开关切换 */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+}
+
+/* 操作按钮 */
+.plugin-settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 768px) {
+  .plugin-market-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .plugin-categories {
+    justify-content: center;
+  }
+
+  .plugin-search input {
+    width: 100%;
+  }
+
+  .plugin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plugin-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .plugin-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+  }
+}
