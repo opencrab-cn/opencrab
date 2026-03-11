@@ -19,8 +19,11 @@ const VALID_CHANNELS = [
   'auth:refreshToken',
   'auth:getUserInfo',
   // 模型相关
+  'model:list',
   'model:chat',
-  'model:chat-stream',
+  'model:stream',
+  'model:validateToken',
+  'model:getCapabilities',
   // 系统相关
   'system:get-info',
 ];

@@ -17,6 +17,8 @@ import * as path from 'path';
 
 // 导入 OAuth 认证相关
 import { setupAuthIpcHandlers } from './ipc/auth.handlers';
+// 导入模型 IPC 处理器
+import { setupModelIpcHandlers } from './ipc/model.handlers';
 
 // 导入模型适配器
 // TODO: 实现具体的 Model Adapter
@@ -103,21 +105,9 @@ function createWindow(): void {
 function setupIPC(): void {
   // 注册认证相关的 IPC 处理器
   setupAuthIpcHandlers();
-
-  /**
-   * 示例：模型 API 调用相关 IPC
-   * TODO: 实现完整的 IPC 处理器
-   */
-  ipcMain.handle('model:chat', async (_event, payload) => {
-    console.log('[IPC] 模型聊天请求', payload);
-    // TODO: 实现模型调用逻辑
-    return { content: 'TODO: 实现模型调用', modelId: '' };
-  });
-
-  ipcMain.handle('model:chat-stream', async (_event, payload) => {
-    console.log('[IPC] 模型流式聊天请求', payload);
-    // TODO: 实现流式调用逻辑
-  });
+  
+  // 注册模型相关的 IPC 处理器
+  setupModelIpcHandlers();
 
   /**
    * 示例：系统能力相关 IPC
@@ -160,6 +150,21 @@ function initModelAdapters(): void {
   // - 讯飞星火 (科大讯飞)
   // - 其他中文大模型...
 }
+
+/**
+ * 应用退出前的清理工作
+ */
+app.on('will-quit', (event) => {
+  console.log('[Main] 应用即将退出，执行清理工作');
+  // TODO: 清理资源
+  // - 保存所有令牌到安全存储
+  // - 关闭所有网络连接
+  // - 清理临时文件
+  
+  // 清理模型适配器缓存
+  const { cleanupAdapters } = require('./ipc/model.handlers');
+  cleanupAdapters();
+});
 
 /**
  * 应用就绪时的初始化流程
