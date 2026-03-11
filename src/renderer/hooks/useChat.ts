@@ -8,6 +8,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { ChatMessage, StreamChunk } from '../../main/adapters/model.interface';
 import { ChatMessageItem, SendMessageParams, QwenChatOptions } from '../../shared/types';
+import { AnyAttachment, buildMultimodalMessage } from '../../shared/types/attachments';
 
 /**
  * 对话状态接口
@@ -53,6 +54,8 @@ export interface SendMessageOptions {
   chatOptions?: QwenChatOptions;
   /** 是否使用流式响应 */
   stream?: boolean;
+  /** 附件列表 */
+  attachments?: AnyAttachment[];
 }
 
 /**
@@ -212,10 +215,10 @@ export function useChat(initialModelId: string = 'qwen-max'): UseChatReturn {
    * 发送消息（非流式）
    */
   const sendNonStreamMessage = useCallback(async (
-    userMessageId: string,
     assistantMessageId: string,
     modelId: string,
-    chatOptions?: QwenChatOptions
+    chatOptions?: QwenChatOptions,
+    customMessages?: ChatMessage[]
   ) => {
     try {
       // 准备消息历史
@@ -254,10 +257,10 @@ export function useChat(initialModelId: string = 'qwen-max'): UseChatReturn {
    * 发送消息（流式）
    */
   const sendStreamMessage = useCallback(async (
-    userMessageId: string,
     assistantMessageId: string,
     modelId: string,
-    chatOptions?: QwenChatOptions
+    chatOptions?: QwenChatOptions,
+    customMessages?: ChatMessage[]
   ) => {
     try {
       // 准备消息历史
@@ -340,9 +343,9 @@ export function useChat(initialModelId: string = 'qwen-max'): UseChatReturn {
       // 重置错误状态
       setError(null);
       
-      // 验证内容
-      if (!content || content.trim().length === 0) {
-        throw new Error('消息内容不能为空');
+      // 验证内容（有附件时可以为空）
+      if (!content.trim() && (!options?.attachments || options.attachments.length === 0)) {
+        throw new Error('消息内容或附件不能为空');
       }
 
       // 如果正在加载，先停止
@@ -353,22 +356,43 @@ export function useChat(initialModelId: string = 'qwen-max'): UseChatReturn {
 
       setIsLoading(true);
 
-      // 添加用户消息
-      const userMessageId = addUserMessage(content);
-      
-      // 添加助手消息（占位）
-      const assistantMessageId = addAssistantMessage();
-
       // 确定参数
       const modelId = options?.modelId || currentModelId;
       const stream = options?.stream ?? true; // 默认使用流式
       const chatOptions = options?.chatOptions;
+      const attachments = options?.attachments || [];
+
+      // 构建多模态消息
+      let apiMessages: ChatMessage[];
+      
+      if (attachments.length > 0) {
+        // 多模态消息格式
+        const lastUserMessage = buildMultimodalMessage(content, attachments);
+        const previousMessages = convertToApiMessages(messagesRef.current);
+        apiMessages = [...previousMessages, lastUserMessage];
+      } else {
+        // 纯文本消息
+        const userMessage: ChatMessage = {
+          role: 'user',
+          content: content.trim(),
+        };
+        const previousMessages = convertToApiMessages(messagesRef.current);
+        apiMessages = [...previousMessages, userMessage];
+      }
+      
+      // 添加用户消息到本地历史
+      if (content.trim()) {
+        addUserMessage(content);
+      }
+      
+      // 添加助手消息（占位）
+      const assistantMessageId = addAssistantMessage();
 
       // 发送消息
       if (stream) {
-        await sendStreamMessage(userMessageId, assistantMessageId, modelId, chatOptions);
+        await sendStreamMessage(assistantMessageId, modelId, chatOptions, apiMessages);
       } else {
-        await sendNonStreamMessage(userMessageId, assistantMessageId, modelId, chatOptions);
+        await sendNonStreamMessage(assistantMessageId, modelId, chatOptions, apiMessages);
       }
     } catch (err) {
       // 错误已在具体函数中处理
