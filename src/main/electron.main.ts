@@ -16,8 +16,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 
 // 导入 OAuth 认证相关
-// TODO: 实现具体的 OAuth Provider
-// import { IOAuthProvider } from './auth/provider.interface';
+import { setupAuthIpcHandlers } from './ipc/auth.handlers';
 
 // 导入模型适配器
 // TODO: 实现具体的 Model Adapter
@@ -102,21 +101,8 @@ function createWindow(): void {
  * 所有跨进程调用都必须通过此处的处理器
  */
 function setupIPC(): void {
-  /**
-   * 示例：OAuth 认证相关 IPC
-   * TODO: 实现完整的 IPC 处理器
-   */
-  ipcMain.handle('oauth:get-token', async (_event, providerId: string) => {
-    console.log(`[IPC] 获取 ${providerId} 的 OAuth 令牌`);
-    // TODO: 实现令牌获取逻辑
-    return { accessToken: '', expiresAt: 0 };
-  });
-
-  ipcMain.handle('oauth:refresh-token', async (_event, providerId: string) => {
-    console.log(`[IPC] 刷新 ${providerId} 的 OAuth 令牌`);
-    // TODO: 实现令牌刷新逻辑
-    return { accessToken: '', expiresAt: 0 };
-  });
+  // 注册认证相关的 IPC 处理器
+  setupAuthIpcHandlers();
 
   /**
    * 示例：模型 API 调用相关 IPC
