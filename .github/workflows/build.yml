@@ -37,7 +37,7 @@ jobs:
           cache: 'npm'
       
       - name: 安装依赖
-        run: npm ci
+        run: npm install
       
       - name: 运行测试
         run: npm test || true  # 测试失败不中断构建
@@ -80,7 +80,7 @@ jobs:
           cache: 'npm'
       
       - name: 安装依赖
-        run: npm ci
+        run: npm install
       
       - name: 导入代码签名证书
         env:
@@ -143,7 +143,7 @@ jobs:
           cache: 'npm'
       
       - name: 安装依赖
-        run: npm ci
+        run: npm install
       
       - name: 构建主进程
         run: npx tsc -p tsconfig.main.json
