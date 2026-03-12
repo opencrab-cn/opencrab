@@ -195,4 +195,3 @@ Thanks to the following open source projects:
 
 ---
 
-**Made with ❤️ for Chinese Users**
