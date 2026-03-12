@@ -76,13 +76,41 @@ function createWindow(): void {
   // 生产环境加载打包后的文件
   const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged || process.defaultApp;
   console.log('[Main] 开发模式:', isDev, 'NODE_ENV:', process.env.NODE_ENV, 'isPackaged:', app.isPackaged, 'defaultApp:', process.defaultApp);
+  console.log('[Main] __dirname:', __dirname);
+  console.log('[Main] app.getAppPath():', app.getAppPath());
   
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
     // 开发环境下自动打开开发者工具
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/renderer/index.html'));
+    // 生产环境：使用 loadFile 加载 HTML，Vite 会自动处理资源路径
+    // 关键：不要指定完整路径，让 Electron 自动查找
+    const indexPath = path.join(__dirname, '../renderer/index.html');
+    console.log('[Main] 加载 HTML 文件:', indexPath);
+    console.log('[Main] __dirname 完整路径:', __dirname);
+    console.log('[Main] 解析后的 indexPath:', path.resolve(indexPath));
+    
+    const fs = require('fs');
+    if (fs.existsSync(indexPath)) {
+      console.log('[Main] ✓ HTML 文件存在');
+      // 读取文件内容并打印第一行，确认是正确的文件
+      const content = fs.readFileSync(indexPath, 'utf-8');
+      console.log('[Main] HTML 内容预览:', content.substring(0, 200));
+      
+      // 使用 file:// 协议加载
+      const fileUrl = 'file://' + path.resolve(indexPath);
+      console.log('[Main] 加载 URL:', fileUrl);
+      mainWindow.loadURL(fileUrl);
+    } else {
+      console.error('[Main] ❌ HTML 文件不存在:', indexPath);
+      // 尝试备选路径
+      const fallbackPath = path.join(__dirname, '../../renderer/index.html');
+      if (fs.existsSync(fallbackPath)) {
+        console.log('[Main] 使用备选路径:', fallbackPath);
+        mainWindow.loadFile(fallbackPath);
+      }
+    }
   }
 
   // 窗口准备完成后显示
