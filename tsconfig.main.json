@@ -6,5 +6,9 @@
     "target": "ES2020"
   },
   "include": ["src/main/**/*", "src/preload/**/*", "src/shared/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "src/main/**/*.test.ts",
+    "src/main/**/__tests__/**/*.ts"
+  ]
 }
